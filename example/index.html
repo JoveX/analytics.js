@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<script type="text/javascript" src="../src/json2.js"></script>
+<script type="text/javascript" src="../src/uuid.js"></script>
+
+<script type="text/javascript">
+
+    var _amapaq = _amapaq || [];
+    (function() {
+        var path = (("https:" == document.location.protocol) ? "https://" + location.host + "/" : "http://" + location.host + "/");
+        // 定义当前站点id
+        // _amapaq.push(['setSiteId', 'MO']);
+        // 定义产品类型
+        _amapaq.push(['setProduct', 'mo']);
+        // 定义日志发送的路径
+        _amapaq.push(['setTrackerUrl', path + 'img/a.gif']);
+        _amapaq.push(['trackPageView']);
+        // _amapaq.push(['enableLinkTracking']);
+        var doc = document,
+            script = doc.createElement('script'),
+            scriptTag = doc.getElementsByTagName('script')[0];
+        script.type = 'text/javascript';
+        script.defer = true;
+        script.async = true;
+        // script.src = path + 'src/' + 'piwik.js';
+        script.src = path + 'src/' + 'logger.js';
+        scriptTag.parentNode.insertBefore(script, scriptTag);
+    })();
+
+</script>
+</body>
+</html>

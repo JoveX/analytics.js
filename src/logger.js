@@ -710,6 +710,13 @@ if (typeof AMapLog !== 'object') {
                 setReferrer: setReferrer
             };
 
+            var actionMethod = {
+                // 发送日志
+                send: function () {
+                    logEcommerce();
+                }
+            };
+
             return {
                 // 统一的配置方法
                 config: function (option) {
@@ -724,13 +731,13 @@ if (typeof AMapLog !== 'object') {
                         }
                     }
                 },
-                // 存放当前日志数据
-                setTrackerData: function (obj) {
+                data: function (obj) {
                     trackerData.push(obj);
                 },
-                // 发送日志
-                trackPageView: function () {
-                    logEcommerce();
+                action: function (method) {
+                    if (method && actionMethod[method]) {
+                        actionMethod[method]();
+                    }
                 }
             };
         }
@@ -756,7 +763,11 @@ if (typeof AMapLog !== 'object') {
 
         // 直接执行_amapaq方法，判断需要进行的下一步操作
         _amapaq = function () {
-            apply(arguments);
+            var args = [];
+            for (var i = 0; i < arguments.length; i++) {
+                args.push(arguments[i]);
+            }
+            apply(args);
         };
 
         AMapLog = {};

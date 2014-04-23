@@ -666,19 +666,24 @@ if (typeof AMapLog !== 'object') {
             updateDomainHash();
 
             return {
+                // 设置发送日志的路径
                 setTrackerUrl: function (trackerUrl) {
                     configTrackerUrl = trackerUrl;
                 },
+                // 设置产品类型
                 setProduct: function (product) {
                     configProduct = product;
                 },
+                // 设置当前程序版本号
                 setVersion: function (version) {
                     configVersion = version;
                 },
+                // 存放当前日志数据
                 setTrackerData: function (obj) {
                     console.log(obj);
                     trackerData.push(obj);
                 },
+                // 发送日志
                 trackPageView: function () {
                     logEcommerce();
                 }

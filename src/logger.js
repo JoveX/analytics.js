@@ -629,6 +629,22 @@ if (typeof AMapLog !== 'object') {
             }
 
             /**
+             * 按照所给长度，截取字符串，并返回截取后的数组
+             * @param  {String} str 原始字符串
+             * @param  {Number} len 每段字符串的长度
+             * @return {Array}     截取后，以数组形式返回
+             */
+            function spliceString (str, len) {
+                // 截取的数量
+                var num = str.length / len;
+                var result = [];
+                for (var i = 0; i < num; i++) {
+                    result.push(str.substr(i * len, len));
+                }
+                return result;
+            }
+
+            /**
              * 获取整个日志的search字符串，不截断日志
              * @return {String} "a=1&b=2"
              */

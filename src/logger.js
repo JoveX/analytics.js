@@ -527,7 +527,7 @@ if (typeof AMapLog !== 'object') {
                 hash = sha1,
                 configCookieDomain,
                 configCookiePath,
-                configLogMaxLength = 530,
+                configLogMaxLength = 2000,
                 // session超时时间，1小时
                 sessionTimeout = 3600000,
                 // 生成当前session的时间

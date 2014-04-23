@@ -10,31 +10,32 @@
 
 <script type="text/javascript">
 
-    var _amapaq = _amapaq || [];
-    (function() {
-        var path = (("https:" == document.location.protocol) ? "https://" + location.host + "/" : "http://" + location.host + "/");
-        // 日志配置
-        _amapaq.push(['config', {
-            product: 'mo',
-            trackerUrl: path + 'img/a.gif',
-            version: '2.1.0'
-        }]);
-        // 定义产品类型
-        // _amapaq.push(['setProduct', 'mo']);
-        // 定义日志发送的路径
-        // _amapaq.push(['setTrackerUrl', path + 'img/a.gif']);
-        // _amapaq.push(['setVersion', '88.0.1']);
-        // _amapaq.push(['trackPageView']);
+    (function(window, document, tagName, src, globalMethod, script, siblingsScript) {
+        window[globalMethod] = window[globalMethod] || function() {
+            var args = [];
+            for (var i = 0; i < arguments.length; i++) {
+                args.push(arguments[i]);
+            };
+            (window[globalMethod].q = window[globalMethod].q || []).push(args);
+        };
         var doc = document,
-            script = doc.createElement('script'),
-            scriptTag = doc.getElementsByTagName('script')[0];
+            script = doc.createElement(tagName),
+            scriptTag = doc.getElementsByTagName(tagName)[0];
         script.type = 'text/javascript';
         script.defer = true;
         script.async = true;
-        // script.src = path + 'src/' + 'piwik.js';
-        script.src = path + 'src/' + 'logger.js';
+        script.src = src;
         scriptTag.parentNode.insertBefore(script, scriptTag);
-    })();
+    })(window, document, 'script', '//' + location.host + '/src/logger.js', '_amapaq');
+
+    // 日志配置
+    _amapaq('config', {
+        product: 'mo',
+        trackerUrl: location.host + 'img/a.gif',
+        version: '2.1.0'
+    });
+
+    // _amapaq('action', 'send');
 
 </script>
 </body>

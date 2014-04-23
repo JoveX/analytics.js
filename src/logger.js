@@ -5,8 +5,10 @@
  * @version 0.1
  */
 
-if (typeof _amapaq !== 'object') {
-    _amapaq = [];
+if (typeof _amapaq !== 'function') {
+    _amapaq = function () {
+    };
+    _amapaq.q = [];
 }
 
 if (typeof AMapLog !== 'object') {
@@ -461,17 +463,6 @@ if (typeof AMapLog !== 'object') {
             return word.substr(0, 1).toUpperCase() + word.substr(1);
         }
 
-        /************************************************************
-         * Proxy object
-         * 日志代理对象，让_amapaq初始化以后，可以继续使用push方法，对应的执行push到_amapaq里面的方法
-         ************************************************************/
-
-        function TrackerProxy() {
-            return {
-                push: apply
-            };
-        }
-
         function Tracker (trackerUrl, siteId) {
 
             var
@@ -746,23 +737,27 @@ if (typeof AMapLog !== 'object') {
 
         asyncTracker = new Tracker();
 
-        // 先将_amapaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）
-        for (iterator = 0; iterator < _amapaq.length; iterator++) {
-            if (_amapaq[iterator][0] === 'setTrackerUrl' || _amapaq[iterator][0] === 'setProduct') {
-                apply(_amapaq[iterator]);
-                delete _amapaq[iterator];
+        // 先将_amapaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）等配置
+        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
+            if (_amapaq.q[iterator][0] === 'config') {
+                apply(_amapaq.q[iterator]);
+                delete _amapaq.q[iterator];
             }
         }
 
         // 执行_amapaq中其他的方法
-        for (iterator = 0; iterator < _amapaq.length; iterator++) {
-            if (_amapaq[iterator]) {
-                apply(_amapaq[iterator]);
+        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
+            if (_amapaq.q[iterator]) {
+                apply(_amapaq.q[iterator]);
             }
         }
 
-        // 将原来的数组替换为Tracker代理方法，每次执行push都直接执行对应的方法
-        _amapaq = new TrackerProxy();
+        _amapaq.q.length = 0;
+
+        // 直接执行_amapaq方法，判断需要进行的下一步操作
+        _amapaq = function () {
+            apply(arguments);
+        };
 
         AMapLog = {};
         return AMapLog;

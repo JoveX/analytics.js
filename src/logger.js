@@ -673,7 +673,7 @@ if (typeof AMapLog !== 'object') {
              * 设置来源标识
              * @param {String} src 
              */
-            function setReferrer (src) {
+            function setReferrerFlag (src) {
                 referrerFlag = src;
                 referrerSession = getSessionId();
             }
@@ -707,7 +707,7 @@ if (typeof AMapLog !== 'object') {
                     configVersion = version;
                 },
                 // 设置来源标识
-                setReferrer: setReferrer
+                setReferrerFlag: setReferrerFlag
             };
 
             var actionMethod = {

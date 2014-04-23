@@ -124,7 +124,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         /*
-         * Load JavaScript file (asynchronously)
+         * javascript异步加载
          */
         function loadScript(src, onLoad) {
             var script = documentAlias.createElement('script');
@@ -149,7 +149,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         /*
-         * Get page referrer
+         * 获取页面referrer
          */
         function getReferrer() {
             var referrer = '';
@@ -174,7 +174,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         /*
-         * Extract scheme/protocol from URL
+         * 从URL抓出协议
          */
         function getProtocolScheme(url) {
             var e = new RegExp('^([a-z]+):'),
@@ -184,7 +184,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         /*
-         * Extract hostname from URL
+         * 从URL中抓出host
          */
         function getHostName(url) {
             // scheme : // [username [: password] @] hostame [: port] [/ [path] [? query] [# fragment]]
@@ -195,7 +195,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         /*
-         * Extract parameter from URL
+         * 从URL抓出参数
          */
         function getParameter(url, name) {
             var regexSearch = "[\\?&#]" + name + "=([^&#]*)";
@@ -363,7 +363,7 @@ if (typeof AMapLog !== 'object') {
 
 
         /*
-         * Fix-up URL when page rendered from search engine cache or translated page
+         * 当页面来源是搜素引擎或翻译页面的话，对URL进行修正
          */
         function urlFixup(hostName, href, referrer) {
             if (hostName === 'translate.googleusercontent.com') {       // Google
@@ -421,8 +421,7 @@ if (typeof AMapLog !== 'object') {
 
         /************************************************************
          * Proxy object
-         * - this allows the caller to continue push()'ing to _amapaq
-         *   after the Tracker has been initialized and loaded
+         * 日志代理对象，让_amapaq初始化以后，可以继续使用push方法，对应的执行push到_amapaq里面的方法
          ************************************************************/
 
         function TrackerProxy() {
@@ -509,7 +508,7 @@ if (typeof AMapLog !== 'object') {
             }
 
             /**
-             * 获取整个日志的search字符串
+             * 获取整个日志的search字符串，不截断日志
              * @return {String} "a=1&b=2"
              */
             function getRequest () {

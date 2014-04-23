@@ -760,6 +760,7 @@ if (typeof AMapLog !== 'object') {
         }
 
         _amapaq.q.length = 0;
+        delete _amapaq.q;
 
         // 直接执行_amapaq方法，判断需要进行的下一步操作
         _amapaq = function () {

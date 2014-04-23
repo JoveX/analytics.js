@@ -674,6 +674,41 @@ if (typeof AMapLog !== 'object') {
             }
 
             /**
+             * 根据字符串获取校验位
+             * @param  {String} str 原始字符串
+             * @return {String}     校验位
+             */
+            function getVerify (str) {
+                var verify,
+                    sum = 0;
+                var verifyIndexArr = [10, 20, 30, 40, 50];
+                for (var i = 0; i < verifyIndexArr.length; i++) {
+                    if ( !! str.charCodeAt(verifyIndexArr[i])) {
+                        sum += str.charCodeAt(verifyIndexArr[i]);
+                    }
+                }
+                verify = sum.toString(16);
+                return verify;
+            }
+
+            /**
+             * 为请求的字符串添加校验位和分页
+             * @param {Array} requestList 请求链接的数组
+             */
+            function addVerifyAndPage (requestList) {
+                if (requestList.length > 1) {
+                    for (var i = 0; i < requestList.length; i++) {
+                        requestList[i] += '&total=' + requestList.length;
+                        requestList[i] += '&page=' + (i + 1);
+                        requestList[i] += '&verify=' + getVerify(requestList[i]);
+                    }
+                } else {
+                    requestList[0] += '&verify=' + getVerify(requestList[0]);
+                }
+                return requestList;
+            }
+
+            /**
              * 获取整个日志的search字符串，不截断日志
              * @return {String} "a=1&b=2"
              */
@@ -732,6 +767,8 @@ if (typeof AMapLog !== 'object') {
                 } else {
                     requestList.push(paramStr);
                 }
+
+                requestList = addVerifyAndPage(requestList);
 
                 return requestList;
             }

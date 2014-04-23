@@ -488,6 +488,11 @@ if (typeof AMapLog !== 'object') {
                 sessionCreateTime,
                 // session id
                 sessionId,
+                // 来源站点标识
+                referrerFlag,
+                // 标识存储来源站点时的session ID
+                // 只在当前session周期生效
+                referrerSession,
                 // 步骤ID，每发一次日志，自增1
                 stepId = 0;
 
@@ -567,13 +572,14 @@ if (typeof AMapLog !== 'object') {
                     'product=' + configProduct,
                 ];
                 // 来源
-                // if (trackerData.src) {
-                //     paramArr.push('src=' + trackerData.src);
-                // }
+                if (referrerFlag) {
+                    paramArr.push('src=' + referrerFlag);
+                }
                 // 程序当前版本号
                 if (configVersion) {
                     paramArr.push('version=' + configVersion);
                 }
+
                 return paramArr;
             }
 
@@ -588,14 +594,14 @@ if (typeof AMapLog !== 'object') {
 
                 // 用户当前城市adcode、位置经纬度、图面中心点等信息
                 if (!!trackerData.position && !isEmptyObject(trackerData.position)) {
-                    var position = pick(position, 'adcode', 'mapcenter', 'userloc');
+                    var position = pick(trackerData.position, 'adcode', 'mapcenter', 'userloc');
                     if (!isEmptyObject(position)) {
                         paramArr.push('position=' + JSON.stringify(trackerData.position));
                     }
                 }
                 // 用户自定义操作描述，记录用户操作等信息
                 if (!!trackerData.content && !isEmptyObject(trackerData.content)) {
-                    var content = pick(content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
+                    var content = pick(trackerData.content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
                     if (!isEmptyObject(content)) {
                         paramArr.push('content=' + JSON.stringify(trackerData.content));
                     }
@@ -611,13 +617,13 @@ if (typeof AMapLog !== 'object') {
              */
             function logEcommerce () {
                 var client_id = getClientId(),
-                    requestList;
+                    requestList = [];
                 if (trackerData.length > 0) {
                     for (var i = 0; i < trackerData.length; i++) {
-                        requestList = getRequest(trackerData[i]);
+                        requestList = requestList.concat(getRequest(trackerData[i]));
                     }
                 } else {
-                    requestList = getRequest();
+                    requestList = requestList.concat(getRequest());
                 }
 
                 for (var j = requestList.length - 1; j >= 0; j--) {
@@ -663,6 +669,27 @@ if (typeof AMapLog !== 'object') {
                 return sessionId;
             }
 
+            /**
+             * 设置来源标识
+             * @param {String} src 
+             */
+            function setReferrerFlag (src) {
+                referrerFlag = src;
+                referrerSession = getSessionId();
+            }
+
+            /**
+             * 获取来源标识
+             * @return {String} 来源标志
+             */
+            function getReferrerFlag () {
+                if (referrerSession === getSessionId() && referrerFlag) {
+                } else {
+                    referrerFlag = '';
+                }
+                return referrerFlag;
+            }
+
             updateDomainHash();
 
             return {
@@ -680,9 +707,10 @@ if (typeof AMapLog !== 'object') {
                 },
                 // 存放当前日志数据
                 setTrackerData: function (obj) {
-                    console.log(obj);
                     trackerData.push(obj);
                 },
+                // 设置来源标识
+                setReferrerFlag: setReferrerFlag,
                 // 发送日志
                 trackPageView: function () {
                     logEcommerce();

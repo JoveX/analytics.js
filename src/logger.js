@@ -527,6 +527,7 @@ if (typeof AMapLog !== 'object') {
                 hash = sha1,
                 configCookieDomain,
                 configCookiePath,
+                configLogMaxLength = 530,
                 // session超时时间，1小时
                 sessionTimeout = 3600000,
                 // 生成当前session的时间
@@ -609,8 +610,6 @@ if (typeof AMapLog !== 'object') {
                     'client_id=' + getClientId(),
                     // session id
                     'session_id=' + getSessionId(),
-                    // log id，每条日志都有自己唯一的log id
-                    'log_id=' + uuid(),
                     // 从用户打开程序开始，每次发送日志自动增加1
                     'step_id=' + stepId++,
                     // 产品标识，MO为mo
@@ -645,13 +644,50 @@ if (typeof AMapLog !== 'object') {
             }
 
             /**
+             * 切割日志
+             * @param  {String} logId      当前日志ID
+             * @param  {String} contentStr 当前日志content部分字符串长度
+             * @return {Array}            切割后的字符串数组
+             */
+            function spliceLog (logId, contentStr) {
+                // 发送地址长度：'//mo.amap.com/img/a.gif'.length
+                // log_id=uuid长度：44
+                // 切割日志页码相关参数需要长度：20
+                // &content=这段也需要长度：10
+                // 协议，比如https:需要长度：6
+                // 校验位长度：30
+                // 已有的日志长度总和
+                var existLen = configTrackerUrl.length + 44 + 20 + 10 + 6 + 30;
+                // 剩余可用日志长度
+                var lastLen = configLogMaxLength - existLen - 20 - 10 - 6 - 30;
+                var result = [],
+                    strList = spliceString(contentStr, lastLen);
+
+                for (var i = 0; i < strList.length; i++) {
+                    result.push([
+                        'log_id=' + logId,
+                        'content=' + strList[i]
+                    ].join('&'));
+                }
+
+                return result;
+            }
+
+            /**
              * 获取整个日志的search字符串，不截断日志
              * @return {String} "a=1&b=2"
              */
             function getRequest (trackerData) {
                 trackerData = trackerData || {};
                 var paramArr = getNecessityParam(trackerData),
-                    paramStr = '';
+                    logId = uuid(),
+                    // 切割后的日志数组，会遍历此数组，逐个发送请求
+                    requestList = [],
+                    // 日志content部分的字符串
+                    logContentStr = '',
+                    paramStr;
+
+                paramArr.push('log_id=' + logId);
 
                 // 用户当前城市adcode、位置经纬度、图面中心点等信息
                 if (!!trackerData.position && !isEmptyObject(trackerData.position)) {
@@ -660,17 +696,44 @@ if (typeof AMapLog !== 'object') {
                         paramArr.push('position=' + JSON.stringify(trackerData.position));
                     }
                 }
+
                 // 用户自定义操作描述，记录用户操作等信息
                 if (!!trackerData.content && !isEmptyObject(trackerData.content)) {
+                    // 过滤content中没有用的数据
                     var content = pick(trackerData.content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
+                    // 深度遍历content，将其叶子value进行uri编码
+                    content = deepEncodeObjValue({}, content);
+
                     if (!isEmptyObject(content)) {
-                        paramArr.push('content=' + JSON.stringify(trackerData.content));
+                        logContentStr = JSON.stringify(content);
+                        paramArr.push('content=' + logContentStr);
                     }
                 }
 
                 paramStr = paramArr.join('&');
 
-                return [paramStr];
+                // 长度超出了日志的最大长度
+                if ((configTrackerUrl + paramStr).length + 30 > configLogMaxLength) {
+                    paramArr.pop();
+                    paramStr = paramArr.join('&');
+                    // 发送地址长度：'//mo.amap.com/img/a.gif'.length
+                    // 切割日志页码相关参数需要长度：20
+                    // &content=这段也需要长度：10
+                    // 协议，比如https:需要长度：6
+                    // 校验位长度：30
+                    // 已有的日志长度总和
+                    var existLen = paramStr.length + configTrackerUrl.length + 20 + 10 + 6 + 30;
+                    // 剩余可用日志长度
+                    var lastLen = configLogMaxLength - existLen - 20 - 10 - 6 - 30;
+                    paramStr += '&content=' + logContentStr.substr(0, lastLen);
+                    // 第一条日志
+                    requestList.push(paramStr);
+                    requestList = requestList.concat(spliceLog(logId, logContentStr.substr(lastLen)));
+                } else {
+                    requestList.push(paramStr);
+                }
+
+                return requestList;
             }
 
             /**

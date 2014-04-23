@@ -18,16 +18,14 @@ if (typeof AMapLog !== 'object') {
          ************************************************************/
 
         var
-        // expireDateTime,
-
-        /* plugins */
-        // plugins = {},
-
         /* alias frequently used globals for added minification */
             documentAlias = document,
             navigatorAlias = navigator,
             screenAlias = screen,
             windowAlias = window,
+            ArrayProto = Array.prototype,
+            concat = ArrayProto.concat,
+            slice = ArrayProto.slice,
 
             /* encode */
             encodeWrapper = windowAlias.encodeURIComponent,
@@ -79,6 +77,41 @@ if (typeof AMapLog !== 'object') {
          */
         function isString(property) {
             return typeof property === 'string' || property instanceof String;
+        }
+
+        /**
+         * 是否为空对象
+         */
+        function isEmptyObject(obj) {
+            var name;
+            for (name in obj) {
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * 根据白名单返回一个对象的副本
+         * @param  {Object} obj      原始对象
+         * @param  {Function} iterator 迭代器函数，用于过滤对象
+         * @param  {Object} context  迭代器内部上线文
+         * @return {Object}          过滤后的对象
+         */
+        function pick(obj, iterator, context) {
+            var result = {};
+            if (isFunction(iterator)) {
+                for (var key in obj) {
+                    var value = obj[key];
+                    if (iterator.call(context, value, key, obj)) result[key] = value;
+                }
+            } else {
+                var keys = concat.apply([], slice.call(arguments, 1));
+                for (var i = 0, length = keys.length; i < length; i++) {
+                    var key = keys[i];
+                    if (key in obj) result[key] = obj[key];
+                }
+            }
+            return result;
         }
 
         /**
@@ -434,21 +467,29 @@ if (typeof AMapLog !== 'object') {
 
             var
                 // 发送日志的路径
-                configTrackerUrl
-                , configProduct
-                , trackerData = []
+                configTrackerUrl,
+                configProduct,
+                configVersion,
+                trackerData = [],
                 // First-party cookie name prefix
-                , configCookieNamePrefix = '_amap_'
+                configCookieNamePrefix = '_amap_',
                 // Current URL and Referrer URL
-                , locationArray = urlFixup(documentAlias.domain, windowAlias.location.href, getReferrer())
-                , domainAlias = domainFixup(locationArray[0])
-                , locationHrefAlias = locationArray[1]
-                , configReferrerUrl = locationArray[2]
-                , domainHash
-                , hash = sha1
-                , configCookieDomain
-                , configCookiePath
-                ;
+                locationArray = urlFixup(documentAlias.domain, windowAlias.location.href, getReferrer()),
+                domainAlias = domainFixup(locationArray[0]),
+                locationHrefAlias = locationArray[1],
+                configReferrerUrl = locationArray[2],
+                domainHash,
+                hash = sha1,
+                configCookieDomain,
+                configCookiePath,
+                // session超时时间，1小时
+                sessionTimeout = 3600000,
+                // 生成当前session的时间
+                sessionCreateTime,
+                // session id
+                sessionId,
+                // 步骤ID，每发一次日志，自增1
+                stepId = 0;
 
 
 
@@ -508,21 +549,84 @@ if (typeof AMapLog !== 'object') {
             }
 
             /**
+             * 发送日志之前，拼装日志必要的参数
+             * 如：用户ID，session ID，log id等
+             * @return {[type]}             [description]
+             */
+            function getNecessityParam () {
+                var paramArr = [
+                    // 用户ID，读cookie
+                    'client_id=' + getClientId(),
+                    // session id
+                    'session_id=' + getSessionId(),
+                    // log id，每条日志都有自己唯一的log id
+                    'log_id=' + uuid(),
+                    // 从用户打开程序开始，每次发送日志自动增加1
+                    'step_id=' + stepId++,
+                    // 产品标识，MO为mo
+                    'product=' + configProduct,
+                ];
+                // 来源
+                // if (trackerData.src) {
+                //     paramArr.push('src=' + trackerData.src);
+                // }
+                // 程序当前版本号
+                if (configVersion) {
+                    paramArr.push('version=' + configVersion);
+                }
+                return paramArr;
+            }
+
+            /**
              * 获取整个日志的search字符串，不截断日志
              * @return {String} "a=1&b=2"
              */
-            function getRequest () {
+            function getRequest (trackerData) {
+                trackerData = trackerData || {};
+                var paramArr = getNecessityParam(trackerData),
+                    paramStr = '';
+
+                // 用户当前城市adcode、位置经纬度、图面中心点等信息
+                if (!!trackerData.position && !isEmptyObject(trackerData.position)) {
+                    var position = pick(position, 'adcode', 'mapcenter', 'userloc');
+                    if (!isEmptyObject(position)) {
+                        paramArr.push('position=' + JSON.stringify(trackerData.position));
+                    }
+                }
+                // 用户自定义操作描述，记录用户操作等信息
+                if (!!trackerData.content && !isEmptyObject(trackerData.content)) {
+                    var content = pick(content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
+                    if (!isEmptyObject(content)) {
+                        paramArr.push('content=' + JSON.stringify(trackerData.content));
+                    }
+                }
+
+                paramStr = paramArr.join('&');
+
+                return [paramStr];
             }
 
             /**
              * 拼装日志，并发送
              */
             function logEcommerce () {
-                var client_id = getClientId();
-                for (var i = trackerData.length - 1; i >= 0; i--) {
-                    console.log(trackerData[i]);
+                var client_id = getClientId(),
+                    requestList;
+                if (trackerData.length > 0) {
+                    for (var i = 0; i < trackerData.length; i++) {
+                        requestList = getRequest(trackerData[i]);
+                    }
+                } else {
+                    requestList = getRequest();
                 }
-                // console.log(client_id);
+
+                for (var j = requestList.length - 1; j >= 0; j--) {
+                    // 发送请求
+                    getImage(requestList[j]);
+                }
+
+                // 清空trackerData数组
+                trackerData.length = 0;
             }
 
             /**
@@ -538,6 +642,27 @@ if (typeof AMapLog !== 'object') {
                 return client_id;
             }
 
+            /**
+             * 获取当前session id
+             * 用户没有任何操作一小时后过期
+             * @return {String} session id
+             */
+            function getSessionId () {
+                var now = new Date().getTime();
+                // 没有session id，则创建一个
+                if (!sessionId) {
+                    sessionId = uuid();
+                } else {
+                    // 有session id，但过期了，再创建一个
+                    if (now - sessionTimeout > sessionCreateTime) {
+                        sessionId = uuid();
+                    }
+                }
+                // 每次都更新一下session创建时间，当用户没有任何操作，一小时后过期
+                sessionCreateTime = now;
+                return sessionId;
+            }
+
             updateDomainHash();
 
             return {
@@ -547,12 +672,14 @@ if (typeof AMapLog !== 'object') {
                 setProduct: function (product) {
                     configProduct = product;
                 },
+                setVersion: function (version) {
+                    configVersion = version;
+                },
                 setTrackerData: function (obj) {
                     console.log(obj);
                     trackerData.push(obj);
                 },
                 trackPageView: function () {
-                    // getRequest();
                     logEcommerce();
                 }
             };

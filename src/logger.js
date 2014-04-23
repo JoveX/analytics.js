@@ -13,11 +13,29 @@ if (typeof _amapaq !== 'function') {
 
 if (typeof AMapLog !== 'object') {
     AMapLog = (function() {
-        'use strict';
+        // 'use strict';
 
         /************************************************************
          * 私有变量
          ************************************************************/
+
+        // Save bytes in the minified (but not gzipped) version:
+        var ArrayProto = Array.prototype,
+            ObjProto = Object.prototype,
+            FuncProto = Function.prototype;
+
+        // Create quick reference variables for speed access to core prototypes.
+        var push = ArrayProto.push,
+            slice = ArrayProto.slice,
+            concat = ArrayProto.concat,
+            toString = ObjProto.toString,
+            hasOwnProperty = ObjProto.hasOwnProperty;
+
+        // All **ECMAScript 5** native function implementations that we hope to use
+        // are declared here.
+        var nativeIsArray = Array.isArray,
+            nativeKeys = Object.keys,
+            nativeBind = FuncProto.bind;
 
         var
         /* alias frequently used globals for added minification */
@@ -25,9 +43,6 @@ if (typeof AMapLog !== 'object') {
             navigatorAlias = navigator,
             screenAlias = screen,
             windowAlias = window,
-            ArrayProto = Array.prototype,
-            concat = ArrayProto.concat,
-            slice = ArrayProto.slice,
 
             /* encode */
             encodeWrapper = windowAlias.encodeURIComponent,
@@ -67,6 +82,15 @@ if (typeof AMapLog !== 'object') {
             return typeof property === 'function';
         }
 
+
+        /**
+         * 判断是否为数组
+         * es5有原生的判断方法
+         */
+        var isArray = nativeIsArray || function(obj) {
+                return toString.call(obj) == '[object Array]';
+            };
+
         /*
          * 是否是对象
          */
@@ -90,6 +114,27 @@ if (typeof AMapLog !== 'object') {
                 return false;
             }
             return true;
+        }
+
+        /**
+         * 深度遍历对象，并将对象所有的叶子value进行uri编码
+         */
+        function deepEncodeObjValue(result, source) {
+            for (var key in source) {
+                var copy = source[key];
+                // 如window.window === window，会陷入死循环，需要处理一下
+                if (source === copy) {
+                    continue;
+                }
+                if (isObject(copy)) {
+                    result[key] = arguments.callee(result[key] || {}, copy);
+                } else if (isArray(copy)) {
+                    result[key] = arguments.callee(result[key] || [], copy);
+                } else {
+                    result[key] = encodeURIComponent(copy);
+                }
+            }
+            return result;
         }
 
         /**

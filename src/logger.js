@@ -452,6 +452,15 @@ if (typeof AMapLog !== 'object') {
             return title;
         }
 
+        /**
+         * 将单词首字母大写
+         * @param  {String} word 首字母大写前的单词
+         * @return {String}      首字母大写后的单词
+         */
+        function upperCaseFirstLetter (word) {
+            return word.substr(0, 1).toUpperCase() + word.substr(1);
+        }
+
         /************************************************************
          * Proxy object
          * 日志代理对象，让_amapaq初始化以后，可以继续使用push方法，对应的执行push到_amapaq里面的方法
@@ -673,7 +682,7 @@ if (typeof AMapLog !== 'object') {
              * 设置来源标识
              * @param {String} src 
              */
-            function setReferrerFlag (src) {
+            function setReferrer (src) {
                 referrerFlag = src;
                 referrerSession = getSessionId();
             }
@@ -692,7 +701,8 @@ if (typeof AMapLog !== 'object') {
 
             updateDomainHash();
 
-            return {
+            // 日志系统参数配置
+            var configMethod = {
                 // 设置发送日志的路径
                 setTrackerUrl: function (trackerUrl) {
                     configTrackerUrl = trackerUrl;
@@ -705,12 +715,28 @@ if (typeof AMapLog !== 'object') {
                 setVersion: function (version) {
                     configVersion = version;
                 },
+                // 设置来源标识
+                setReferrer: setReferrer
+            };
+
+            return {
+                // 统一的配置方法
+                config: function (option) {
+                    var methodName = '';
+                    for (var name in option) {
+                        if (option.hasOwnProperty(name)) {
+                            methodName = 'set' + upperCaseFirstLetter(name);
+                            // 如果当前执行的set方法存在于configMethod中，则直接执行
+                            if (isFunction(configMethod[methodName])) {
+                                configMethod[methodName](option[name]);
+                            }
+                        }
+                    }
+                },
                 // 存放当前日志数据
                 setTrackerData: function (obj) {
                     trackerData.push(obj);
                 },
-                // 设置来源标识
-                setReferrerFlag: setReferrerFlag,
                 // 发送日志
                 trackPageView: function () {
                     logEcommerce();

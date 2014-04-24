@@ -1009,6 +1009,9 @@
                     setEnableLocal: function (enabled) {
                         configEnableLocal = !!enabled;
                     },
+                    setCookieNamePrefix: function (cookieNamePrefix) {
+                        configCookieNamePrefix = cookieNamePrefix;
+                    }
                 };
 
                 var actionMethod = {

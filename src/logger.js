@@ -5,27 +5,27 @@
  * @version 0.1
  */
 
-(function( global, factory ) {
+(function( window, factory ) {
     
-    if (typeof global._amapaq !== 'function') {
-        global._amapaq = function() {
+    if (typeof window._amapaq !== 'function') {
+        window._amapaq = function() {
             var args = [];
             for (var i = 0; i < arguments.length; i++) {
                 args.push(arguments[i]);
             }
-            (global._amapaq.q = global._amapaq.q || []).push(args);
+            (window._amapaq.q = window._amapaq.q || []).push(args);
         };
-        global._amapaq.q = [];
+        window._amapaq.q = [];
     }
 
     if (typeof define === 'function' && define.amd) {
         define(function() {
-            return factory(global);
+            return factory(window);
         });
     } else if (typeof(module) != 'undefined' && module.exports) {
-        module.exports = factory(global);
+        module.exports = factory(window);
     } else {
-        global._amapaq = factory(global);
+        window._amapaq = factory(window);
     }
 
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
@@ -84,6 +84,70 @@
             /************************************************************
              * 私有方法，工具类函数
              ************************************************************/
+
+            /**
+             * 提供localStorage的setItem\getItem\removeItem等方法
+             */
+            var toolLocalStorage = (function () {
+
+                var localStorage = false,
+                    // 当localStorage不可用时，将数据存入此对象中
+                    toolLocalStorageData = {},
+                    JSON = windowAlias.JSON;
+
+                try {
+                    // 在某些浏览器当cookies或localStorage被禁用时会抛出异常 (i.e. Chrome)
+                    localStorage = windowAlias.localStorage;
+                    localStorage.setItem('TEST', '1');
+                    localStorage.removeItem('TEST');
+                } catch (e) {
+                    localStorage = false;
+                }
+
+                // MooTools Compatibility
+                JSON.stringify = JSON.stringify || JSON.encode;
+                JSON.parse = JSON.parse || JSON.decode;
+
+                // 为Util提供一个localStorage的方法
+                if (localStorage) {
+                    return {
+                        setItem: function(key, value) {
+                            var str = JSON.stringify(value);
+                            localStorage.setItem(key, str);
+                        },
+                        getItem: function(key) {
+                            var value = localStorage.getItem(key);
+                            // 当value里面有值再去用JSON.parse解析
+                            // 否则在Android2.*上执行
+                            // JSON.parse(null)或JSON.parse(undefined)
+                            // 会抛出Illegal access错误
+                            
+                            // value没值，让function直接返回undefined
+                            if (value) {
+                                return JSON.parse(value);
+                            }
+                        },
+                        removeItem: function(key) {
+                            localStorage.removeItem(key);
+                        }
+                    };
+                } else {
+                    return {
+                        setItem: function (key, value) {
+                            if (value) {
+                                toolLocalStorageData[key] = value;
+                            }
+                        },
+                        getItem: function (key) {
+                            return toolLocalStorageData[key];
+                        },
+                        removeItem: function (key) {
+                            delete toolLocalStorageData[key];
+                        }
+                    };
+                }
+            }());
+
 
             /*
              * 是否定义
@@ -582,6 +646,11 @@
                     configTrackerUrl,
                     configProduct,
                     configVersion,
+                    // 是否启用localStorage存储离线日志
+                    // true：启用离线日志
+                    // false：不启用离线日志
+                    // 默认：false
+                    configEnableLocal = false,
                     trackerData = [],
                     // First-party cookie name prefix
                     configCookieNamePrefix = '_amap_',
@@ -935,7 +1004,11 @@
                         configVersion = version;
                     },
                     // 设置来源标识
-                    setReferrerFlag: setReferrerFlag
+                    setReferrerFlag: setReferrerFlag,
+                    // 设置是否启动离线日志
+                    setEnableLocal: function (enabled) {
+                        configEnableLocal = !!enabled;
+                    },
                 };
 
                 var actionMethod = {

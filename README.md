@@ -3,7 +3,19 @@
 
 
 ### 加载日志程序
+
+#### 浏览器加载
+
     (function(f,g,c,a,d,h,e){f[d]=f[d]||function(){var j=[];for(var k=0;k<arguments.length;k++){j.push(arguments[k])}(f[d].q=f[d].q||[]).push(j)};var i=g,h=i.createElement(c),b=i.getElementsByTagName(c)[0];h.type="text/javascript";h.defer=true;h.async=true;h.src=a;b.parentNode.insertBefore(h,b)})(window,document,"script","//"+location.host+"/src/logger.js","_amapaq");
+
+
+#### amd等工具加载
+需要在页面底部自行定义_amapaq的function，如下
+
+    if(typeof _amapaq!=="function"){_amapaq=function(){var a=[];for(var b=0;b<arguments.length;b++){a.push(arguments[b])}(_amapaq.q=_amapaq.q||[]).push(a)};_amapaq.q=[]};
+
+直接在requirejs中自行引用logger对应路径即可使用。
+
 
 ### 执行日志相关配置
     _amapaq('config', {

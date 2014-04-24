@@ -643,7 +643,7 @@
 
                 var
                     // 发送日志的路径
-                    configTrackerUrl,
+                    configTrackerUrl = '//' + location.host + '/img/a.gif',
                     configProduct,
                     configVersion,
                     configClientId,

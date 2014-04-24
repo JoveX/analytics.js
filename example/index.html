@@ -5,8 +5,6 @@
     <title>Document</title>
 </head>
 <body>
-<script type="text/javascript" src="../src/json2.js"></script>
-<script type="text/javascript" src="../src/uuid.js"></script>
 
 <script type="text/javascript">
 
@@ -28,14 +26,15 @@
     //     scriptTag.parentNode.insertBefore(script, scriptTag);
     // })(window, document, 'script', '//' + location.host + '/src/logger.js', '_amapaq');
 
-    (function(f,g,c,a,d,h,e){f[d]=f[d]||function(){var j=[];for(var k=0;k<arguments.length;k++){j.push(arguments[k])}(f[d].q=f[d].q||[]).push(j)};var i=g,h=i.createElement(c),b=i.getElementsByTagName(c)[0];h.type="text/javascript";h.defer=true;h.async=true;h.src=a;b.parentNode.insertBefore(h,b)})(window,document,"script","//"+location.host+"/src/logger.js","_amapaq");
+    (function(f,g,c,a,d,h,e){f[d]=f[d]||function(){var j=[];for(var k=0;k<arguments.length;k++){j.push(arguments[k])}(f[d].q=f[d].q||[]).push(j)};var i=g,h=i.createElement(c),b=i.getElementsByTagName(c)[0];h.type="text/javascript";h.defer=true;h.async=true;h.src=a;b.parentNode.insertBefore(h,b)})(window,document,"script","//"+location.host+"/build/logger.min.js","_amapaq");
 
 
     // 日志配置
     _amapaq('config', {
         product: 'mo',
         trackerUrl: '//' + location.host + '/img/a.gif',
-        version: '2.1.0'
+        version: '2.1.0',
+        enableLocal: true
     });
 
     _amapaq('action', 'send');

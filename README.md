@@ -6,13 +6,13 @@
 
 #### 浏览器加载
 
-    (function(f,g,c,a,d,h,e){f[d]=f[d]||function(){var j=[];for(var k=0;k<arguments.length;k++){j.push(arguments[k])}(f[d].q=f[d].q||[]).push(j)};var i=g,h=i.createElement(c),b=i.getElementsByTagName(c)[0];h.type="text/javascript";h.defer=true;h.async=true;h.src=a;b.parentNode.insertBefore(h,b)})(window,document,"script","//"+location.host+"/src/logger.js","_amapaq");
+    !function(a,b,c,d,e,f){a[e]=a[e]||function(){var c,b=[];for(c=0;c<arguments.length;c++)b.push(arguments[c]);(a[e].q=a[e].q||[]).push(b)},a[e].q=a[e].q||[];var h=b,f=h.createElement(c),i=h.getElementsByTagName(c)[0];f.type="text/javascript",f.defer=!0,f.async=!0,f.src=d,i.parentNode.insertBefore(f,i)}(window,document,"script","//"+location.host+"/build/logger.min.js","_amapaq");
 
 
 #### amd等工具加载
 需要在页面底部自行定义_amapaq的function，如下
 
-    if(typeof _amapaq!=="function"){_amapaq=function(){var a=[];for(var b=0;b<arguments.length;b++){a.push(arguments[b])}(_amapaq.q=_amapaq.q||[]).push(a)};_amapaq.q=[]};
+    !function(a,b){a[b]=a[b]||function(){var d,c=[];for(d=0;d<arguments.length;d++)c.push(arguments[d]);(a[b].q=a[b].q||[]).push(c)},a[b].q=a[b].q||[]}(window,"_amapaq");
 
 直接在requirejs中自行引用logger对应路径即可使用。
 

@@ -646,6 +646,7 @@
                     configTrackerUrl,
                     configProduct,
                     configVersion,
+                    configClientId,
                     // 是否启用localStorage存储离线日志
                     // true：启用离线日志
                     // false：不启用离线日志
@@ -813,7 +814,7 @@
                     // 校验位长度：30
                     lastLen -= 30;
 
-                    
+
                     var result = [],
                         strList = spliceString(contentStr, lastLen);
 
@@ -955,7 +956,7 @@
                  * @return {String} uuid
                  */
                 function getClientId () {
-                    var client_id = getCookie(getCookieName('client_id'));
+                    var client_id = configClientId || getCookie(getCookieName('client_id'));
                     if (!client_id) {
                         client_id = uuid();
                         setCookie(getCookieName('client_id'), client_id);
@@ -1029,6 +1030,9 @@
                     },
                     setCookieNamePrefix: function (cookieNamePrefix) {
                         configCookieNamePrefix = cookieNamePrefix;
+                    },
+                    setClientId: function (client_id) {
+                        configClientId = client_id;
                     }
                 };
 

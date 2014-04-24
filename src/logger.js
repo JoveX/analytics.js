@@ -6,7 +6,12 @@
  */
 
 if (typeof _amapaq !== 'function') {
-    _amapaq = function () {
+    _amapaq = function() {
+        var args = [];
+        for (var i = 0; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        }
+        (_amapaq.q = _amapaq.q || []).push(args);
     };
     _amapaq.q = [];
 }

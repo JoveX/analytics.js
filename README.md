@@ -18,11 +18,22 @@
 
 
 ### 执行日志相关配置
+
     _amapaq('config', {
+        // 产品类型
         product: 'mo',
+        // 接收日志的地址
         trackerUrl: '//' + location.host + '/img/a.gif',
-        version: '2.1.0'
+        // 当前程序版本号
+        version: '2.1.0',
+        // 使缓存优先存入localStorage
+        enableLocal: true,
+        // 使用的cookie或localStorage缓存前缀
+        cookieNamePrefix: '_webTeam_',
+        // 优先读取配置的用户ID，若此值为空，则自动生一个uuid存入cookie
+        clientId: 'client_0019241513534682987'
     });
+
 - product：日志程序类型，比如MO固定传mo
 - trackerUrl：日志发送的服务器地址
 - version：当前版本号

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    // (function(window, globalMethod) {
+    //     window[globalMethod] = window[globalMethod] || function() {
+    //         var args = [];
+    //         for (var i = 0; i < arguments.length; i++) {
+    //             args.push(arguments[i]);
+    //         }
+    //         (window[globalMethod].q = window[globalMethod].q || []).push(args);
+    //     };
+    //     window[globalMethod].q = window[globalMethod].q || [];
+    // })(window, '_amapaq');
+
+    !function(a,b){a[b]=a[b]||function(){var d,c=[];for(d=0;d<arguments.length;d++)c.push(arguments[d]);(a[b].q=a[b].q||[]).push(c)},a[b].q=a[b].q||[]}(window,"_amapaq");
+
+
+    // 日志配置
+    _amapaq('config', {
+        product: 'mo',
+        trackerUrl: '//' + location.host + '/img/a.gif',
+        version: '2.1.0',
+        // 使缓存优先存入localStorage
+        enableLocal: true,
+        // 使用的cookie或localStorage缓存前缀
+        cookieNamePrefix: '_webTeam_',
+        // 优先读取配置的用户ID，若此值为空，则自动生一个uuid存入cookie
+        clientId: 'client_0019241513534682987'
+    });
+
+    _amapaq('action', 'send');
+
+</script>
+<script type="text/javascript" src="http://requirejs.org/docs/release/2.1.11/minified/require.js"  data-main="scripts/main"></script>
+</body>
+</html>

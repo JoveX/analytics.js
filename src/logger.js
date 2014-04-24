@@ -934,6 +934,14 @@
                 function logEcommerce () {
                     var client_id = getClientId(),
                         requestList = [];
+                    // 存在localStorage中的key
+                    var localStorageKey = configCookieNamePrefix + '.trackerData.' + domainHash;
+                    // 若可以使用localStorage，则优先从localStorage中取出，和之前已有的数据数组合并
+                    if (configEnableLocal) {
+                        var tmpTrackerData = toolLocalStorage.getItem(localStorageKey) || [];
+                        trackerData = trackerData.concat(tmpTrackerData);
+                    }
+                    
                     if (trackerData.length > 0) {
                         for (var i = 0; i < trackerData.length; i++) {
                             requestList = requestList.concat(getRequest(trackerData[i]));
@@ -949,6 +957,7 @@
 
                     // 清空trackerData数组
                     trackerData.length = 0;
+                    toolLocalStorage.removeItem(localStorageKey);
                 }
 
                 /**
@@ -1058,7 +1067,14 @@
                         }
                     },
                     data: function (obj) {
-                        trackerData.push(obj);
+                        if (configEnableLocal) {
+                            var localStorageKey = configCookieNamePrefix + '.trackerData.' + domainHash;
+                            var tmpTrackerData = toolLocalStorage.getItem(localStorageKey) || [];
+                            tmpTrackerData.push(obj);
+                            toolLocalStorage.setItem(localStorageKey, tmpTrackerData);
+                        } else {
+                            trackerData.push(obj);
+                        }
                     },
                     action: function (method) {
                         if (method && actionMethod[method]) {

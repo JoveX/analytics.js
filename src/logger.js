@@ -867,39 +867,15 @@
                  * 获取整个日志的search字符串，不截断日志
                  * @return {String} "a=1&b=2"
                  */
-                function getRequest (trackerData) {
-                    trackerData = trackerData || {};
-                    var paramArr = getNecessityParam(trackerData),
-                        logId = uuid(),
-                        // 切割后的日志数组，会遍历此数组，逐个发送请求
-                        requestList = [],
-                        // 日志content部分的字符串
-                        logContentStr = '',
-                        paramStr;
+                function getRequest (logId, paramArr) {
 
-                    paramArr.push('log_id=' + logId);
-
-                    // 用户当前城市adcode、位置经纬度、图面中心点等信息
-                    if (!!trackerData.position && !isEmptyObject(trackerData.position)) {
-                        var position = pick(trackerData.position, 'adcode', 'mapcenter', 'userloc');
-                        if (!isEmptyObject(position)) {
-                            paramArr.push('position=' + JSON.stringify(trackerData.position));
-                        }
+                    var paramStr, requestList = [];
+                    if (logId && paramArr) {
+                    } else {
+                        logId = uuid();
+                        paramArr = getNecessityParam();
+                        paramArr.push('log_id=' + logId);
                     }
-
-                    // 用户自定义操作描述，记录用户操作等信息
-                    if (!!trackerData.content && !isEmptyObject(trackerData.content)) {
-                        // 过滤content中没有用的数据
-                        var content = pick(trackerData.content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
-                        // 深度遍历content，将其叶子value进行uri编码
-                        content = deepEncodeObjValue({}, content);
-
-                        if (!isEmptyObject(content)) {
-                            logContentStr = JSON.stringify(content);
-                            paramArr.push('content=' + logContentStr);
-                        }
-                    }
-
                     paramStr = paramArr.join('&');
 
                     // 长度超出了日志的最大长度
@@ -934,6 +910,7 @@
                 function logEcommerce () {
                     var client_id = getClientId(),
                         requestList = [];
+
                     // 存在localStorage中的key
                     var localStorageKey = configCookieNamePrefix + '.trackerData.' + domainHash;
                     // 若可以使用localStorage，则优先从localStorage中取出，和之前已有的数据数组合并
@@ -941,10 +918,10 @@
                         var tmpTrackerData = toolLocalStorage.getItem(localStorageKey) || [];
                         trackerData = trackerData.concat(tmpTrackerData);
                     }
-                    
+
                     if (trackerData.length > 0) {
                         for (var i = 0; i < trackerData.length; i++) {
-                            requestList = requestList.concat(getRequest(trackerData[i]));
+                            requestList = requestList.concat(getRequest(trackerData[i].logId, trackerData[i].data));
                         }
                     } else {
                         requestList = requestList.concat(getRequest());
@@ -1015,6 +992,50 @@
                     return referrerFlag;
                 }
 
+                /**
+                 * 获取拼接好 sessionID等字符串之后的对象
+                 * @param  {String} trackerData 原始日志对象
+                 * @return {Object}             组装好的日志对象
+                 */
+                function getFullLogObject (trackerData) {
+                    
+                    trackerData = trackerData || {};
+                    var paramArr = getNecessityParam(trackerData),
+                        logId = uuid(),
+                        // 切割后的日志数组，会遍历此数组，逐个发送请求
+                        requestList = [],
+                        // 日志content部分的字符串
+                        logContentStr = '';
+
+                    paramArr.push('log_id=' + logId);
+
+                    // 用户当前城市adcode、位置经纬度、图面中心点等信息
+                    if (!!trackerData.position && !isEmptyObject(trackerData.position)) {
+                        var position = pick(trackerData.position, 'adcode', 'mapcenter', 'userloc');
+                        if (!isEmptyObject(position)) {
+                            paramArr.push('position=' + JSON.stringify(trackerData.position));
+                        }
+                    }
+
+                    // 用户自定义操作描述，记录用户操作等信息
+                    if (!!trackerData.content && !isEmptyObject(trackerData.content)) {
+                        // 过滤content中没有用的数据
+                        var content = pick(trackerData.content, 'oprCategory', 'oprCmd', 'page', 'button', 'data');
+                        // 深度遍历content，将其叶子value进行uri编码
+                        content = deepEncodeObjValue({}, content);
+
+                        if (!isEmptyObject(content)) {
+                            logContentStr = JSON.stringify(content);
+                            paramArr.push('content=' + logContentStr);
+                        }
+                    }
+
+                    return {
+                        logId: logId,
+                        data: paramArr
+                    };
+                }
+
                 updateDomainHash();
 
                 // 日志系统参数配置
@@ -1067,6 +1088,7 @@
                         }
                     },
                     data: function (obj) {
+                        obj = getFullLogObject(obj);
                         if (configEnableLocal) {
                             var localStorageKey = configCookieNamePrefix + '.trackerData.' + domainHash;
                             var tmpTrackerData = toolLocalStorage.getItem(localStorageKey) || [];

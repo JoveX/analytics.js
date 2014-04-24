@@ -7,7 +7,7 @@ module.exports = function(grunt) {
                 separator: ';'
             },
             dist: {
-                src: ['src/json2.js', 'src/uuid.js', 'src/logger.js'],
+                src: ['src/json2.js', 'src/logger.js'],
                 dest: 'tmp/<%= pkg.name %>.js'
             }
         },

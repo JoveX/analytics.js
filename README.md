@@ -20,14 +20,17 @@
 ### 执行日志相关配置
 
     _amapaq('config', {
-        // 产品类型
+        // 日志程序类型，比如MO固定传mo
         product: 'mo',
-        // 接收日志的地址
+        // 日志发送的服务器地址
         trackerUrl: '//' + location.host + '/img/a.gif',
-        // 当前程序版本号
+        // 程序当前版本号
         version: '2.1.0',
-        // 使缓存优先存入localStorage
+        // 使日志优先存入localStorage
         enableLocal: true,
+        // localStorage可存放的最大数据容量
+        // 当允许本地缓存时有效
+        localSize: 100 * 1024,
         // 使用的cookie或localStorage缓存前缀
         cookieNamePrefix: '_webTeam_',
         // 优先读取配置的用户ID，若此值为空，则自动生一个uuid存入cookie
@@ -36,9 +39,15 @@
 
 - product：日志程序类型，比如MO固定传mo
 - trackerUrl：日志发送的服务器地址
-- version：当前版本号
+- version：程序当前版本号
+- enableLocal：使日志优先存入localStorage
+- localSize：localStorage可存放日志的最大数据容量
+- cookieNamePrefix：使用的cookie或localStorage缓存前缀
+- clientId：用户唯一标识。优先读取此配置的用户ID，若此值为空，则自动生一个uuid存入cookie
 
 ### 添加来源参数
+用于标识当前流量来源  
+
     _amapaq('config', {
         referrerFlag: 'sina'
     });

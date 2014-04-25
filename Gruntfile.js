@@ -22,12 +22,19 @@ module.exports = function(grunt) {
         },
         clean: {
             tmp: ["tmp"]
+        },
+        watch: {
+            scripts: {
+                files: ['src/**/*.js'],
+                tasks: ['clean:tmp', 'concat', 'uglify', 'clean:tmp']
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['clean:tmp', 'concat', 'uglify', 'clean:tmp']);
 };

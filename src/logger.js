@@ -1066,6 +1066,9 @@
                     },
                     setClientId: function (client_id) {
                         configClientId = client_id;
+                    },
+                    setLocalSize: function (size) {
+                        configLocalSize = size;
                     }
                 };
 

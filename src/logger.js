@@ -652,6 +652,9 @@
                     // false：不启用离线日志
                     // 默认：false
                     configEnableLocal = false,
+                    // 如果将日志存入localStorage，限定可以存入localStorage的最大日志size总和
+                    // 单位：byte
+                    configLocalSize = 500 * 1024, // 500k
                     trackerData = [],
                     // First-party cookie name prefix
                     configCookieNamePrefix = '_amap_',
@@ -1090,9 +1093,18 @@
                     data: function (obj) {
                         obj = getFullLogObject(obj);
                         if (configEnableLocal) {
+                            // 获取本地日志存储的key
                             var localStorageKey = configCookieNamePrefix + '.trackerData.' + domainHash;
+                            // 获取本地已经存储的日志
                             var tmpTrackerData = toolLocalStorage.getItem(localStorageKey) || [];
+                            // 将本次push的日志加入到日志队列
                             tmpTrackerData.push(obj);
+
+                            // 如果本地日志超出最大存储值，则将最先push的日志删除
+                            while (JSON.stringify(tmpTrackerData).length > configLocalSize) {
+                                tmpTrackerData.shift();
+                            }
+
                             toolLocalStorage.setItem(localStorageKey, tmpTrackerData);
                         } else {
                             trackerData.push(obj);

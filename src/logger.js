@@ -885,15 +885,31 @@
                     if ((configTrackerUrl + paramStr).length + 30 > configLogMaxLength) {
                         paramArr.pop();
                         paramStr = paramArr.join('&');
-                        // 发送地址长度：'//mo.amap.com/img/a.gif'.length
-                        // 切割日志页码相关参数需要长度：20
-                        // &content=这段也需要长度：10
-                        // 协议，比如https:需要长度：6
-                        // 校验位长度：30
+                        var existLen = 0;
                         // 已有的日志长度总和
-                        var existLen = paramStr.length + configTrackerUrl.length + 20 + 10 + 6 + 30;
+                        existLen += paramStr.length;
+                        // 发送地址长度：'//mo.amap.com/img/a.gif'.length
+                        existLen += configTrackerUrl.length;
+                        // 切割日志页码相关参数需要长度：20
+                        existLen += 20;
+                        // &content=这段也需要长度：10
+                        existLen += 10;
+                        // 协议，比如https:需要长度：6
+                        existLen += 6;
+                        // 校验位长度：30
+                        existLen += 30;
+
                         // 剩余可用日志长度
-                        var lastLen = configLogMaxLength - existLen - 20 - 10 - 6 - 30;
+                        var lastLen = configLogMaxLength - existLen;
+                        // 切割日志页码相关参数需要长度：20
+                        lastLen -= 20;
+                        // &content=这段也需要长度：10
+                        lastLen -= 10;
+                        // 协议，比如https:需要长度：6
+                        lastLen -= 6;
+                        // 校验位长度：30
+                        lastLen -= 30;
+
                         paramStr += '&content=' + logContentStr.substr(0, lastLen);
                         // 第一条日志
                         requestList.push(paramStr);

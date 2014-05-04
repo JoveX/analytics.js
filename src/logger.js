@@ -733,10 +733,23 @@
                 function getImage(request) {
                     var image = new Image(1, 1);
 
-                    image.onload = function () {
-                        iterator = 0; // To avoid JSLint warning of empty block
-                    };
                     image.src = configTrackerUrl + (configTrackerUrl.indexOf('?') < 0 ? '?' : '&') + request;
+
+                    image.onload = image.onerror = image.onreadystatechange = function() {
+
+                        iterator = 0; // To avoid JSLint warning of empty block
+
+                        if (image && image.readyState && image.readyState != "loaded" && image.readyState != "complete") {
+                            return;
+                        }
+                        //清理script标记
+                        image.onload = image.onreadystatechange = image.onerror = null;
+                        image.src = "";
+                        image.parentNode.removeChild(image);
+                        image = null;
+                    };
+                    document.getElementsByTagName("body")[0].appendChild(image);
+
                 }
 
                 /**

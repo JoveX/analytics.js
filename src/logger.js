@@ -943,7 +943,8 @@
                             requestList = requestList.concat(getRequest(trackerData[i].logId, trackerData[i].data));
                         }
                     } else {
-                        requestList = requestList.concat(getRequest());
+                        // 如果没有执行过data，日志数组中没有日志数据，则不发送任何日志
+                        // requestList = requestList.concat(getRequest());
                     }
 
                     for (var j = requestList.length - 1; j >= 0; j--) {

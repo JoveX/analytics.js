@@ -6,20 +6,20 @@
 
 #### 浏览器加载
 
-    !function(a,b,c,d,e,f){a[e]=a[e]||function(){var c,b=[];for(c=0;c<arguments.length;c++)b.push(arguments[c]);(a[e].q=a[e].q||[]).push(b)},a[e].q=a[e].q||[];var h=b,f=h.createElement(c),i=h.getElementsByTagName(c)[0];f.type="text/javascript",f.defer=!0,f.async=!0,f.src=d,i.parentNode.insertBefore(f,i)}(window,document,"script","//"+location.host+"/build/logger.min.js","_amapaq");
+    !function(a,b,c,d,e,f){a[e]=a[e]||function(){var c,b=[];for(c=0;c<arguments.length;c++)b.push(arguments[c]);(a[e].q=a[e].q||[]).push(b)},a[e].q=a[e].q||[];var h=b,f=h.createElement(c),i=h.getElementsByTagName(c)[0];f.type="text/javascript",f.defer=!0,f.async=!0,f.src=d,i.parentNode.insertBefore(f,i)}(window,document,"script","//"+location.host+"/build/logger.min.js","_sohunewsaq");
 
 
 #### amd等工具加载
-需要在页面底部自行定义_amapaq的function，如下
+需要在页面底部自行定义_sohunewsaq的function，如下
 
-    !function(a,b){a[b]=a[b]||function(){var d,c=[];for(d=0;d<arguments.length;d++)c.push(arguments[d]);(a[b].q=a[b].q||[]).push(c)},a[b].q=a[b].q||[]}(window,"_amapaq");
+    !function(a,b){a[b]=a[b]||function(){var d,c=[];for(d=0;d<arguments.length;d++)c.push(arguments[d]);(a[b].q=a[b].q||[]).push(c)},a[b].q=a[b].q||[]}(window,"_sohunewsaq");
 
 直接在requirejs中自行引用logger对应路径即可使用。
 
 
 ### 执行日志相关配置
 
-    _amapaq('config', {
+    _sohunewsaq('config', {
         // 日志程序类型，比如MO固定传mo
         product: 'mo',
         // 日志发送的服务器地址
@@ -48,12 +48,12 @@
 ### 添加来源参数
 用于标识当前流量来源  
 
-    _amapaq('config', {
+    _sohunewsaq('config', {
         referrerFlag: 'sina'
     });
 
 ### 添加日志数据
-    _amapaq('data', {
+    _sohunewsaq('data', {
         position: {
             "adcode": "110000",
             "mapcenter": {
@@ -78,4 +78,4 @@
     });
 
 ### 向服务器发送日志
-    _amapaq('action', 'send');
+    _sohunewsaq('action', 'send');

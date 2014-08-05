@@ -1,6 +1,6 @@
 /**
  * 日志
- * @authors 徐永全 (xuyq1112@gmail.com)
+ * @authors 徐永全 (davexu@sohu-inc.com)
  * @date    2014-04-22 22:30:37
  * @version 0.1
  */
@@ -14,7 +14,7 @@
     } else if (typeof(module) != 'undefined' && module.exports) {
         module.exports = factory(window);
     } else {
-        window._amapaq = factory(window);
+        window._sohunewsaq = factory(window);
     }
 
 }(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
@@ -1134,36 +1134,36 @@
 
     asyncTracker = new Tracker();
 
-    var _amapaq = windowAlias._amapaq || false;
+    var _sohunewsaq = windowAlias._sohunewsaq || false;
 
-    if (!!_amapaq &&
-        !!_amapaq.q &&
-        isArray(_amapaq.q)) {
+    if (!!_sohunewsaq &&
+        !!_sohunewsaq.q &&
+        isArray(_sohunewsaq.q)) {
 
-        // 先将_amapaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）等配置
-        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
-            if (_amapaq.q[iterator][0] === 'config') {
-                apply(_amapaq.q[iterator]);
-                delete _amapaq.q[iterator];
+        // 先将_sohunewsaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）等配置
+        for (iterator = 0; iterator < _sohunewsaq.q.length; iterator++) {
+            if (_sohunewsaq.q[iterator][0] === 'config') {
+                apply(_sohunewsaq.q[iterator]);
+                delete _sohunewsaq.q[iterator];
             }
         }
 
-        // 执行_amapaq中其他的方法
-        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
-            if (_amapaq.q[iterator]) {
-                apply(_amapaq.q[iterator]);
+        // 执行_sohunewsaq中其他的方法
+        for (iterator = 0; iterator < _sohunewsaq.q.length; iterator++) {
+            if (_sohunewsaq.q[iterator]) {
+                apply(_sohunewsaq.q[iterator]);
             }
         }
 
-        _amapaq.q.length = 0;
-        delete _amapaq.q;
+        _sohunewsaq.q.length = 0;
+        delete _sohunewsaq.q;
 
-        // 移除全局下的_amapaq
-        delete windowAlias._amapaq;
+        // 移除全局下的_sohunewsaq
+        delete windowAlias._sohunewsaq;
     }
 
-    // 直接执行_amapaq方法，判断需要进行的下一步操作
-    _amapaq = function() {
+    // 直接执行_sohunewsaq方法，判断需要进行的下一步操作
+    _sohunewsaq = function() {
         var args = [];
         for (var i = 0; i < arguments.length; i++) {
             args.push(arguments[i]);
@@ -1172,5 +1172,5 @@
     };
 
 
-    return _amapaq;
+    return _sohunewsaq;
 }));

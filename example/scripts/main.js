@@ -10,6 +10,6 @@ require.config({
         "logger": "http://127.0.0.1:3000/build/logger.min"
     }
 });
-require(["logger"], function(_amapaq) {
-    _amapaq('action', 'send');
+require(["logger"], function(_sohunewsaq) {
+    _sohunewsaq('action', 'send');
 });

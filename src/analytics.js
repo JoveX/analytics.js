@@ -30,7 +30,7 @@
 
 }(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
 
-    // 'use strict';
+    'use strict';
 
     /************************************************************
      * 私有变量
@@ -205,9 +205,9 @@
                 continue;
             }
             if (isObject(copy)) {
-                result[key] = arguments.callee(result[key] || {}, copy);
+                result[key] = deepEncodeObjValue(result[key] || {}, copy);
             } else if (isArray(copy)) {
-                result[key] = arguments.callee(result[key] || [], copy);
+                result[key] = deepEncodeObjValue(result[key] || [], copy);
             } else {
                 result[key] = encodeURIComponent(copy);
             }

@@ -7,17 +7,6 @@
 
 (function(window, factory) {
 
-    if (typeof window._amapaq !== 'function') {
-        window._amapaq = function() {
-            var args = [];
-            for (var i = 0; i < arguments.length; i++) {
-                args.push(arguments[i]);
-            }
-            (window._amapaq.q = window._amapaq.q || []).push(args);
-        };
-        window._amapaq.q = [];
-    }
-
     if (typeof define === 'function' && define.amd) {
         define(function() {
             return factory(window);

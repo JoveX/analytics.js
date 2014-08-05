@@ -5,8 +5,8 @@
  * @version 0.1
  */
 
-(function( window, factory ) {
-    
+(function(window, factory) {
+
     if (typeof window._amapaq !== 'function') {
         window._amapaq = function() {
             var args = [];
@@ -28,7 +28,7 @@
         window._amapaq = factory(window);
     }
 
-}(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
+}(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
 
     if (typeof AMapLog !== 'object') {
         AMapLog = (function() {
@@ -88,7 +88,7 @@
             /**
              * 提供localStorage的setItem\getItem\removeItem等方法
              */
-            var toolLocalStorage = (function () {
+            var toolLocalStorage = (function() {
 
                 var localStorage = false,
                     // 当localStorage不可用时，将数据存入此对象中
@@ -121,7 +121,7 @@
                             // 否则在Android2.*上执行
                             // JSON.parse(null)或JSON.parse(undefined)
                             // 会抛出Illegal access错误
-                            
+
                             // value没值，让function直接返回undefined
                             if (value) {
                                 return JSON.parse(value);
@@ -133,15 +133,15 @@
                     };
                 } else {
                     return {
-                        setItem: function (key, value) {
+                        setItem: function(key, value) {
                             if (value) {
                                 toolLocalStorageData[key] = value;
                             }
                         },
-                        getItem: function (key) {
+                        getItem: function(key) {
                             return toolLocalStorageData[key];
                         },
-                        removeItem: function (key) {
+                        removeItem: function(key) {
                             delete toolLocalStorageData[key];
                         }
                     };
@@ -171,8 +171,8 @@
              * es5有原生的判断方法
              */
             var isArray = nativeIsArray || function(obj) {
-                    return toString.call(obj) == '[object Array]';
-                };
+                return toString.call(obj) == '[object Array]';
+            };
 
             /*
              * 是否是对象
@@ -377,7 +377,7 @@
 
             /************************************************************
              * uuid
-            ************************************************************/
+             ************************************************************/
             function uuid() {
                 var _rnds = new Array(16);
                 var _rng = function() {
@@ -419,8 +419,7 @@
             }
             /************************************************************
              * uuid end
-            ************************************************************/
-
+             ************************************************************/
 
 
 
@@ -437,11 +436,11 @@
                 // +   jslinted by: Anthon Pang (http://piwik.org)
 
                 var
-                    rotate_left = function (n, s) {
+                    rotate_left = function(n, s) {
                         return (n << s) | (n >>> (32 - s));
                     },
 
-                    cvt_hex = function (val) {
+                    cvt_hex = function(val) {
                         var strout = '',
                             i,
                             v;
@@ -482,18 +481,18 @@
                 }
 
                 switch (str_len & 3) {
-                case 0:
-                    i = 0x080000000;
-                    break;
-                case 1:
-                    i = str.charCodeAt(str_len - 1) << 24 | 0x0800000;
-                    break;
-                case 2:
-                    i = str.charCodeAt(str_len - 2) << 24 | str.charCodeAt(str_len - 1) << 16 | 0x08000;
-                    break;
-                case 3:
-                    i = str.charCodeAt(str_len - 3) << 24 | str.charCodeAt(str_len - 2) << 16 | str.charCodeAt(str_len - 1) << 8 | 0x80;
-                    break;
+                    case 0:
+                        i = 0x080000000;
+                        break;
+                    case 1:
+                        i = str.charCodeAt(str_len - 1) << 24 | 0x0800000;
+                        break;
+                    case 2:
+                        i = str.charCodeAt(str_len - 2) << 24 | str.charCodeAt(str_len - 1) << 16 | 0x08000;
+                        break;
+                    case 3:
+                        i = str.charCodeAt(str_len - 3) << 24 | str.charCodeAt(str_len - 2) << 16 | str.charCodeAt(str_len - 1) << 8 | 0x80;
+                        break;
                 }
 
                 word_array.push(i);
@@ -577,16 +576,16 @@
              * 当页面来源是搜素引擎或翻译页面的话，对URL进行修正
              */
             function urlFixup(hostName, href, referrer) {
-                if (hostName === 'translate.googleusercontent.com') {       // Google
+                if (hostName === 'translate.googleusercontent.com') { // Google
                     if (referrer === '') {
                         referrer = href;
                     }
 
                     href = getParameter(href, 'u');
                     hostName = getHostName(href);
-                } else if (hostName === 'cc.bingj.com' ||                   // Bing
-                        hostName === 'webcache.googleusercontent.com' ||    // Google
-                        hostName.slice(0, 5) === '74.6.') {                 // Yahoo (via Inktomi 74.6.0.0/16)
+                } else if (hostName === 'cc.bingj.com' || // Bing
+                    hostName === 'webcache.googleusercontent.com' || // Google
+                    hostName.slice(0, 5) === '74.6.') { // Yahoo (via Inktomi 74.6.0.0/16)
                     href = documentAlias.links[0].href;
                     hostName = getHostName(href);
                 }
@@ -635,14 +634,14 @@
              * @param  {String} word 首字母大写前的单词
              * @return {String}      首字母大写后的单词
              */
-            function upperCaseFirstLetter (word) {
+            function upperCaseFirstLetter(word) {
                 return word.substr(0, 1).toUpperCase() + word.substr(1);
             }
 
-            function Tracker (trackerUrl, siteId) {
+            function Tracker(trackerUrl, siteId) {
 
                 var
-                    // 发送日志的路径
+                // 发送日志的路径
                     configTrackerUrl = '//' + location.host + '/img/a.gif',
                     configProduct,
                     configVersion,
@@ -757,7 +756,7 @@
                  * 如：用户ID，session ID，log id等
                  * @return {[type]}             [description]
                  */
-                function getNecessityParam () {
+                function getNecessityParam() {
                     var paramArr = [
                         // 用户ID，读cookie
                         'client_id=' + getClientId(),
@@ -786,7 +785,7 @@
                  * @param  {Number} len 每段字符串的长度
                  * @return {Array}     截取后，以数组形式返回
                  */
-                function spliceString (str, len) {
+                function spliceString(str, len) {
                     // 截取的数量
                     var num = str.length / len;
                     var result = [];
@@ -802,7 +801,7 @@
                  * @param  {String} contentStr 当前日志content部分字符串长度
                  * @return {Array}            切割后的字符串数组
                  */
-                function spliceLog (logId, contentStr) {
+                function spliceLog(logId, contentStr) {
                     // 已有的日志长度总和
                     var existLen = 0;
                     // 发送地址长度：'//mo.amap.com/img/a.gif'.length
@@ -849,12 +848,12 @@
                  * @param  {String} str 原始字符串
                  * @return {String}     校验位
                  */
-                function getVerify (str) {
+                function getVerify(str) {
                     var verify,
                         sum = 0;
                     var verifyIndexArr = [10, 20, 30, 40, 50];
                     for (var i = 0; i < verifyIndexArr.length; i++) {
-                        if ( !! str.charCodeAt(verifyIndexArr[i])) {
+                        if (!!str.charCodeAt(verifyIndexArr[i])) {
                             sum += str.charCodeAt(verifyIndexArr[i]);
                         }
                     }
@@ -866,7 +865,7 @@
                  * 为请求的字符串添加校验位和分页
                  * @param {Array} requestList 请求链接的数组
                  */
-                function addVerifyAndPage (requestList) {
+                function addVerifyAndPage(requestList) {
                     if (requestList.length > 1) {
                         for (var i = 0; i < requestList.length; i++) {
                             requestList[i] += '&total=' + requestList.length;
@@ -883,11 +882,10 @@
                  * 获取整个日志的search字符串，不截断日志
                  * @return {String} "a=1&b=2"
                  */
-                function getRequest (logId, paramArr) {
+                function getRequest(logId, paramArr) {
 
                     var paramStr, requestList = [];
-                    if (logId && paramArr) {
-                    } else {
+                    if (logId && paramArr) {} else {
                         logId = uuid();
                         paramArr = getNecessityParam();
                         paramArr.push('log_id=' + logId);
@@ -939,7 +937,7 @@
                 /**
                  * 拼装日志，并发送
                  */
-                function logEcommerce () {
+                function logEcommerce() {
                     var client_id = getClientId(),
                         requestList = [];
 
@@ -974,7 +972,7 @@
                  * 获取用户id，单个用户的唯一标识
                  * @return {String} uuid
                  */
-                function getClientId () {
+                function getClientId() {
                     var client_id = configClientId || getCookie(getCookieName('client_id'));
                     if (!client_id) {
                         client_id = uuid();
@@ -988,7 +986,7 @@
                  * 用户没有任何操作一小时后过期
                  * @return {String} session id
                  */
-                function getSessionId () {
+                function getSessionId() {
                     var now = new Date().getTime();
                     // 没有session id，则创建一个
                     if (!sessionId) {
@@ -1006,9 +1004,9 @@
 
                 /**
                  * 设置来源标识
-                 * @param {String} src 
+                 * @param {String} src
                  */
-                function setReferrerFlag (src) {
+                function setReferrerFlag(src) {
                     referrerFlag = src;
                     referrerSession = getSessionId();
                 }
@@ -1017,9 +1015,8 @@
                  * 获取来源标识
                  * @return {String} 来源标志
                  */
-                function getReferrerFlag () {
-                    if (referrerSession === getSessionId() && referrerFlag) {
-                    } else {
+                function getReferrerFlag() {
+                    if (referrerSession === getSessionId() && referrerFlag) {} else {
                         referrerFlag = '';
                     }
                     return referrerFlag;
@@ -1030,8 +1027,8 @@
                  * @param  {String} trackerData 原始日志对象
                  * @return {Object}             组装好的日志对象
                  */
-                function getFullLogObject (trackerData) {
-                    
+                function getFullLogObject(trackerData) {
+
                     trackerData = trackerData || {};
                     var paramArr = getNecessityParam(trackerData),
                         logId = uuid(),
@@ -1074,44 +1071,44 @@
                 // 日志系统参数配置
                 var configMethod = {
                     // 设置发送日志的路径
-                    setTrackerUrl: function (trackerUrl) {
+                    setTrackerUrl: function(trackerUrl) {
                         configTrackerUrl = trackerUrl;
                     },
                     // 设置产品类型
-                    setProduct: function (product) {
+                    setProduct: function(product) {
                         configProduct = product;
                     },
                     // 设置当前程序版本号
-                    setVersion: function (version) {
+                    setVersion: function(version) {
                         configVersion = version;
                     },
                     // 设置来源标识
                     setReferrerFlag: setReferrerFlag,
                     // 设置是否启动离线日志
-                    setEnableLocal: function (enabled) {
+                    setEnableLocal: function(enabled) {
                         configEnableLocal = !!enabled;
                     },
-                    setCookieNamePrefix: function (cookieNamePrefix) {
+                    setCookieNamePrefix: function(cookieNamePrefix) {
                         configCookieNamePrefix = cookieNamePrefix;
                     },
-                    setClientId: function (client_id) {
+                    setClientId: function(client_id) {
                         configClientId = client_id;
                     },
-                    setLocalSize: function (size) {
+                    setLocalSize: function(size) {
                         configLocalSize = size;
                     }
                 };
 
                 var actionMethod = {
                     // 发送日志
-                    send: function () {
+                    send: function() {
                         logEcommerce();
                     }
                 };
 
                 return {
                     // 统一的配置方法
-                    config: function (option) {
+                    config: function(option) {
                         var methodName = '';
                         for (var name in option) {
                             if (option.hasOwnProperty(name)) {
@@ -1123,7 +1120,7 @@
                             }
                         }
                     },
-                    data: function (obj) {
+                    data: function(obj) {
                         obj = getFullLogObject(obj);
                         if (configEnableLocal) {
                             // 获取本地日志存储的key
@@ -1143,7 +1140,7 @@
                             trackerData.push(obj);
                         }
                     },
-                    action: function (method) {
+                    action: function(method) {
                         if (method && actionMethod[method]) {
                             actionMethod[method]();
                         }
@@ -1172,7 +1169,7 @@
             delete _amapaq.q;
 
             // 直接执行_amapaq方法，判断需要进行的下一步操作
-            _amapaq = function () {
+            _amapaq = function() {
                 var args = [];
                 for (var i = 0; i < arguments.length; i++) {
                     args.push(arguments[i]);

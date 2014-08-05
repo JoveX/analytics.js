@@ -1134,32 +1134,36 @@
 
     asyncTracker = new Tracker();
 
-    if (!!windowAlias._amapaq &&
-        !!windowAlias._amapaq.q &&
-        isArray(windowAlias._amapaq.q)) {
+    var _amapaq = windowAlias._amapaq || false;
 
-        // 先将windowAlias._amapaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）等配置
-        for (iterator = 0; iterator < windowAlias._amapaq.q.length; iterator++) {
-            if (windowAlias._amapaq.q[iterator][0] === 'config') {
-                apply(windowAlias._amapaq.q[iterator]);
-                delete windowAlias._amapaq.q[iterator];
+    if (!!_amapaq &&
+        !!_amapaq.q &&
+        isArray(_amapaq.q)) {
+
+        // 先将_amapaq数组中的特定方法执行了，比如设置日志路径（setTrackerUrl）和设置产品类型（setProduct）等配置
+        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
+            if (_amapaq.q[iterator][0] === 'config') {
+                apply(_amapaq.q[iterator]);
+                delete _amapaq.q[iterator];
             }
         }
 
-        // 执行windowAlias._amapaq中其他的方法
-        for (iterator = 0; iterator < windowAlias._amapaq.q.length; iterator++) {
-            if (windowAlias._amapaq.q[iterator]) {
-                apply(windowAlias._amapaq.q[iterator]);
+        // 执行_amapaq中其他的方法
+        for (iterator = 0; iterator < _amapaq.q.length; iterator++) {
+            if (_amapaq.q[iterator]) {
+                apply(_amapaq.q[iterator]);
             }
         }
 
-        windowAlias._amapaq.q.length = 0;
-        delete windowAlias._amapaq.q;
+        _amapaq.q.length = 0;
+        delete _amapaq.q;
 
+        // 移除全局下的_amapaq
+        delete windowAlias._amapaq;
     }
 
-    // 直接执行windowAlias._amapaq方法，判断需要进行的下一步操作
-    windowAlias._amapaq = function() {
+    // 直接执行_amapaq方法，判断需要进行的下一步操作
+    _amapaq = function() {
         var args = [];
         for (var i = 0; i < arguments.length; i++) {
             args.push(arguments[i]);
@@ -1168,5 +1172,5 @@
     };
 
 
-    return windowAlias._amapaq;
+    return _amapaq;
 }));
